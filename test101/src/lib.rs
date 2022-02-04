@@ -220,19 +220,19 @@ mod tests {
     // mark individual unit tests with #[test] for them to be registered and fired
     // unlike other frameworks, the function names don't need to be special or have "test" in it
     #[test]
-    fn add_veggie() {
+    fn add_notes() {
         // set up the mock context into the testing environment
         let context = get_context(vec![], false, "robert.testnet".to_string());
         testing_env!(context);
         // instantiate a contract variable with the counter at zero
         let mut contract = Produce::new();
-        let cucumber_upc = U128(679508051007679508);
-        let soso = "so-so".to_string();
+        let note_id = U128(679508051007679508);
+        let soso = "Hello".to_string();
         contract.add_veggie_taste(cucumber_upc.clone(), soso.clone());
         // we can do println! in tests, but reminder to use env::log outside of tests
-        let returned_taste = contract.get_taste(cucumber_upc);
-        println!("Taste returned: {}", returned_taste.clone());
+        let returned_taste = contract.get_taste(note_id);
+        println!("Note returned: {}", returned_taste.clone());
         // confirm
-        assert_eq!(soso, returned_taste);
+        assert_eq!(hello, returned_taste);
     }
 }

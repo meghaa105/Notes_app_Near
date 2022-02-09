@@ -26,9 +26,10 @@ The smart contract is deployed on notes.meghaha.testnet
    ``` near call notes.meghaha.testnet set_status '{"status" : "Blockchain is cool" }' --accountId $YOUR_ACCOUNT_NAME ``` <br />
    #### e. Delete notes <br />
    ``` near call notes.meghaha.testnet delete_note --accountId $YOUR_ACCOUNT_NAME ```<br />
+3. Incase you want to deploy the smart contract on your own account 
+``` near deploy --wasmFile target/wasm32-unknown-unknown/release/test101.wasm --accountId $YOUR_ACCOUNT_NAME --initFunction 'new' --initArgs '{}' ```
 
     
-   
 
 
 

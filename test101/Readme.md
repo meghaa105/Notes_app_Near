@@ -13,7 +13,9 @@ The smart contract is deployed on notes.meghaha.testnet
 
 ## Instructions 
 1. To build the contract - run ./build.sh  <br />
-2. To check out various functions of the contract <br />
+2. Incase you want to deploy the smart contract on your own account  <br />
+``` near deploy --wasmFile target/wasm32-unknown-unknown/release/test101.wasm --accountId $YOUR_ACCOUNT_NAME --initFunction 'new' --initArgs '{}' ```
+3. To check out various functions of the contract <br />
    #### a. Create / Add notes from an account <br />
    ``` near call notes.meghaha.testnet set_status '{"status" : "Trying out writing a smart contract" }' --accountId $YOUR_ACCOUNT_NAME ``` <br />  <br />
    ``` near call notes.meghaha.testnet set_status '{"status" : "Crypto is the future" }' --accountId $YOUR_ACCOUNT_NAME ``` <br />
@@ -25,9 +27,7 @@ The smart contract is deployed on notes.meghaha.testnet
    #### d. Add more notes to the same account <br />
    ``` near call notes.meghaha.testnet set_status '{"status" : "Blockchain is cool" }' --accountId $YOUR_ACCOUNT_NAME ``` <br />
    #### e. Delete notes <br />
-   ``` near call notes.meghaha.testnet delete_note --accountId $YOUR_ACCOUNT_NAME ```<br />
-3. Incase you want to deploy the smart contract on your own account 
-``` near deploy --wasmFile target/wasm32-unknown-unknown/release/test101.wasm --accountId $YOUR_ACCOUNT_NAME --initFunction 'new' --initArgs '{}' ```
+   ``` near call notes.meghaha.testnet delete_note --accountId $YOUR_ACCOUNT_NAME ```<br /> <br />
 
     
 

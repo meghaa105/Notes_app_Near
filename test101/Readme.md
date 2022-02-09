@@ -15,7 +15,7 @@ The smart contract is deployed on notes.meghaha.testnet
 1. To build the contract - run ./build.sh  <br />
 2. To check out various functions of the contract <br />
    a. Create / Add notes from an account <br />
-   ``` near call notes.meghaha.testnet set_status '{"status" : "Trying out writing a smart contract" }' --accountId notes.meghaha.testnet ``` <br />  <br />
+   ``` near call notes.meghaha.testnet set_status '{"status" : "Trying out writing a smart contract" }' --accountId $YOUR_ACCOUNT_NAME ``` <br />  <br />
    ``` near call notes.meghaha.testnet set_status '{"status" : "Crypto is the future" }' --accountId $YOUR_ACCOUNT_NAME ``` <br />
    b. Fetch all notes stored in a particular account <br />
    ``` near call notes.meghaha.testnet get_notes '{ "account_id": "meghaha.testnet" }' --accountId $YOUR_ACCOUNT_NAME ``` <br />

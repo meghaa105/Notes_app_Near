@@ -8,3 +8,6 @@ Functionalities implemented
 
 Currently working on 
 1. Edit notes
+
+The smart contract is deployed on notes.meghaha.testnet
+

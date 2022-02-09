@@ -43,8 +43,6 @@
 //         }
 //     }
 // }
-
-
 use near_sdk::{near_bindgen, env };
 use near_sdk::AccountId;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
@@ -64,7 +62,7 @@ pub type UPC = u128;
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Produce {
-    pub veggies_taste: TreeMap<UPC, String>,
+    // pub veggies_taste: TreeMap<UPC, String>,
     pub status_updates: UnorderedMap<AccountId, String>,
     pub notes : UnorderedMap<AccountId,Vec<String>>,
 }
@@ -84,7 +82,7 @@ impl Produce {
         assert!(env::state_read::<Self>().is_none(), "Already initialized");
         // Note this is an implicit "return" here
         Self {
-            veggies_taste: TreeMap::new(b"v".to_vec()),
+            // veggies_taste: TreeMap::new(b"v".to_vec()),
             status_updates: UnorderedMap::new(b"s".to_vec()),
             notes: UnorderedMap::new(b"w".to_vec()),
         }
@@ -92,44 +90,44 @@ impl Produce {
 
     // This functions changes state, so 1st param uses `&mut self`
     /// Add a veggie and its taste
-    pub fn add_veggie_taste(&mut self, upc: U128, taste: String) {
-        let existing_veggie: Option<String> = self.veggies_taste.get(&upc.into());
-        if existing_veggie.is_some() {
-            env::panic(b"Sorry, already added this UPC.")
-        }
-        self.veggies_taste.insert(&upc.into(), &taste);
-    }
+    // pub fn add_veggie_taste(&mut self, upc: U128, taste: String) {
+    //     let existing_veggie: Option<String> = self.veggies_taste.get(&upc.into());
+    //     if existing_veggie.is_some() {
+    //         env::panic(b"Sorry, already added this UPC.")
+    //     }
+    //     self.veggies_taste.insert(&upc.into(), &taste);
+    // }
 
-    // This functions simple returns state, so 1st param uses `&self`
-    /// Return the stored taste for a veggie
-    pub fn get_taste(&self, upc: U128) -> String {
-        match self.veggies_taste.get(&upc.into()) {
-            Some(stored_taste) => {
-                let log_message = format!("{}", stored_taste.clone());
-                env::log(log_message.as_bytes());
-                // found account user in map, return the taste
-                stored_taste
-            },
-            // did not find the veggie
-            // note: curly brackets after arrow are optional in simple cases, like other languages
-            None => "No note found.".to_string()
-        }
-    }
+    // // This functions simple returns state, so 1st param uses `&self`
+    // /// Return the stored taste for a veggie
+    // pub fn get_taste(&self, upc: U128) -> String {
+    //     match self.veggies_taste.get(&upc.into()) {
+    //         Some(stored_taste) => {
+    //             let log_message = format!("{}", stored_taste.clone());
+    //             env::log(log_message.as_bytes());
+    //             // found account user in map, return the taste
+    //             stored_taste
+    //         },
+    //         // did not find the veggie
+    //         // note: curly brackets after arrow are optional in simple cases, like other languages
+    //         None => "No note found.".to_string()
+    //     }
+    // }
 
-    /// Throw out all veggies. (reset the data structure)
-    pub fn perish_all(&mut self) {
-        assert_eq!(env::current_account_id(), env::predecessor_account_id(), "To cause all veggies to perish, this method must be called by the (implied) contract owner.");
-        self.veggies_taste.clear();
-        env::log(b"All notes removed, time to add more!");
-    }
+    // /// Throw out all veggies. (reset the data structure)
+    // pub fn perish_all(&mut self) {
+    //     assert_eq!(env::current_account_id(), env::predecessor_account_id(), "To cause all veggies to perish, this method must be called by the (implied) contract owner.");
+    //     self.veggies_taste.clear();
+    //     env::log(b"All notes removed, time to add more!");
+    // }
 
-    pub fn view_all(&mut self) {
-        // System.out.println("TreeMap: ");
-        // for value in self.veggies_taste.values() {
-        //     println!("{}", value);
-        // }
+    // pub fn view_all(&mut self) {
+    //     // System.out.println("TreeMap: ");
+    //     // for value in self.veggies_taste.values() {
+    //     //     println!("{}", value);
+    //     // }
         
-    }
+    // }
 
     pub fn set_status(&mut self, status: String) {
         self.status_updates.insert(&env::predecessor_account_id(), &status);
@@ -159,9 +157,11 @@ impl Produce {
             Some(x) => x,
             None => vec![],
         }
-        // self.notes.get(&account_id).unwrap()
+        // self.notes.get(&account_id).unwrap() # Converts it from optional to vector
     }
-
+    pub fn delete_note(&mut self) {
+        self.notes.remove(&env::predecessor_account_id());
+    }
     // pub fn get_updates(&self) -> Vec<(AccountId, std::string::String)> {
     pub fn get_updates(&self)-> Vec<Vec<std::string::String>> {
       

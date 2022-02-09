@@ -13,8 +13,8 @@ near-sdk = "3.1.0"
 
 [profile.release]
 codegen-units = 1
-opt-level = "z"
-lto = true
-debug = false
-panic = "abort"
-overflow-checks = true
+opt-level = "z"         # Optimize for small code size
+lto = true              # Optimize for small code size
+debug = false           # Do not include debug info
+panic = "abort"         # Terminate process on panic
+overflow-checks = true  # Panic on overflow

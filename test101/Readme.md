@@ -11,7 +11,7 @@ Currently working on
 
 The smart contract is deployed on notes.meghaha.testnet
 
-Instructions 
+## Instructions 
 1. To build the contract - run ./build.sh
 2. To check out various functions of the contract 
    a. Create / Add notes from an account 

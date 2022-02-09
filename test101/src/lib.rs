@@ -1,57 +1,10 @@
-// // To conserve gas, efficient serialization is achieved through Borsh (http://borsh.io/)
-// use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-// use near_sdk::{env, near_bindgen, setup_alloc};
-// use near_sdk::collections::LookupMap;
-
-// setup_alloc!();
-
-// // Structs in Rust are similar to other languages, and may include impl keyword as shown below
-// // Note: the names of the structs are not important when calling the smart contract, but the function names are
-// #[near_bindgen]
-// #[derive(BorshDeserialize, BorshSerialize)]
-
-// pub struct Welcome {
-//     records: LookupMap<String, String>,
-// }
-
-// impl Default for Welcome {
-//   fn default() -> Self {
-//     Self {
-//       records: LookupMap::new(b"a".to_vec()),
-//     }
-//   }
-// }
-
-// #[near_bindgen]
-// impl Welcome {
-//     pub fn set_greeting(&mut self, message: String) {
-//         let account_id = env::signer_account_id();
-
-//         // Use env::log to record logs permanently to the blockchain!
-//         env::log(format!("Saving greeting '{}' for account '{}'", message, account_id,).as_bytes());
-
-//         self.records.insert(&account_id, &message);
-//     }
-
-//     // `match` is similar to `switch` in other languages; here we use it to default to "Hello" if
-//     // self.records.get(&account_id) is not yet defined.
-//     // Learn more: https://doc.rust-lang.org/book/ch06-02-match.html#matching-with-optiont
-//     pub fn get_greeting(&self, account_id: String) -> String {
-//         match self.records.get(&account_id) {
-//             Some(greeting) => greeting,
-//             None => "Hello".to_string(),
-//         }
-//     }
-// }
 use near_sdk::{near_bindgen, env };
 use near_sdk::AccountId;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-// use near_sdk::Timestamp;
 // Try these other ones, too!
 // See: https://docs.rs/near-sdk/2.0.0/near_sdk/collections/index.html
 use near_sdk::collections::{ UnorderedMap, TreeMap, Vector};
-// use near_sdk::collections::{ TreeMap };
-use near_sdk::json_types::U128;
+// use near_sdk::json_types::U128;
 use near_sdk::Promise; 
 #[global_allocator]
 static ALLOC: near_sdk::wee_alloc::WeeAlloc = near_sdk::wee_alloc::WeeAlloc::INIT;
@@ -62,13 +15,14 @@ pub type UPC = u128;
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Produce {
-    // pub veggies_taste: TreeMap<UPC, String>,
+    // Just trying out data types and nested data types
     pub status_updates: UnorderedMap<AccountId, String>,
     pub notes : UnorderedMap<AccountId,Vec<String>>,
 }
 
 impl Default for Produce {
     fn default() -> Self {
+        // Check incase the contract is not initialized
         env::panic(b"The contract is not initialized.")
     }
 }
@@ -78,65 +32,28 @@ impl Produce {
     /// Init attribute used for instantiation.
     #[init]
     pub fn new() -> Self {
-        // Useful snippet to copy/paste, making sure state isn't already initialized
+        // Useful snippet,making sure state isn't already initialized
         assert!(env::state_read::<Self>().is_none(), "Already initialized");
-        // Note this is an implicit "return" here
+        // Note this is an implicit "return" here i.e if the last line of a code block doesn't end with a semi colon it is considered as an implicit return
         Self {
-            // veggies_taste: TreeMap::new(b"v".to_vec()),
+            // I don't understand by do we have to do "b'SOME VARIABLE'" for instantiation
             status_updates: UnorderedMap::new(b"s".to_vec()),
             notes: UnorderedMap::new(b"w".to_vec()),
         }
     }
-
-    // This functions changes state, so 1st param uses `&mut self`
-    /// Add a veggie and its taste
-    // pub fn add_veggie_taste(&mut self, upc: U128, taste: String) {
-    //     let existing_veggie: Option<String> = self.veggies_taste.get(&upc.into());
-    //     if existing_veggie.is_some() {
-    //         env::panic(b"Sorry, already added this UPC.")
-    //     }
-    //     self.veggies_taste.insert(&upc.into(), &taste);
-    // }
-
-    // // This functions simple returns state, so 1st param uses `&self`
-    // /// Return the stored taste for a veggie
-    // pub fn get_taste(&self, upc: U128) -> String {
-    //     match self.veggies_taste.get(&upc.into()) {
-    //         Some(stored_taste) => {
-    //             let log_message = format!("{}", stored_taste.clone());
-    //             env::log(log_message.as_bytes());
-    //             // found account user in map, return the taste
-    //             stored_taste
-    //         },
-    //         // did not find the veggie
-    //         // note: curly brackets after arrow are optional in simple cases, like other languages
-    //         None => "No note found.".to_string()
-    //     }
-    // }
-
-    // /// Throw out all veggies. (reset the data structure)
-    // pub fn perish_all(&mut self) {
-    //     assert_eq!(env::current_account_id(), env::predecessor_account_id(), "To cause all veggies to perish, this method must be called by the (implied) contract owner.");
-    //     self.veggies_taste.clear();
-    //     env::log(b"All notes removed, time to add more!");
-    // }
-
-    // pub fn view_all(&mut self) {
-    //     // System.out.println("TreeMap: ");
-    //     // for value in self.veggies_taste.values() {
-    //     //     println!("{}", value);
-    //     // }
-        
-    // }
-
     pub fn set_status(&mut self, status: String) {
+        // Generic implementation 
         self.status_updates.insert(&env::predecessor_account_id(), &status);
+        // Checks if the notes contains the vector associated with a given account ID
         if self.notes.get(&env::predecessor_account_id()).is_none() {
+            // If there is no such entry, we initialize a new Vector and insert the status and then push the vector into the map
             let mut vec = Vec:: new();
             vec.push(status);
             self.notes.insert(&env::predecessor_account_id(), &vec);
         }
         else {
+            // If the account id exists in the map, we just retrieve the vector, insert the note and insert it back again. 
+            // NOTE: I was wondering if there was a more efficient way of just appending a note to the existing vector
             let mut vec1 = self.notes.get(&env::predecessor_account_id()).unwrap();
             vec1.push(status);
             self.notes.insert(&env::predecessor_account_id(), &vec1);
@@ -144,7 +61,7 @@ impl Produce {
 
         // Note, don't need to check size, since `UnorderedMap` doesn't store all data in memory.
     }
-
+    // Following are the generic map applications
     pub fn delete_status(&mut self) {
         self.status_updates.remove(&env::predecessor_account_id());
     }
@@ -152,6 +69,8 @@ impl Produce {
     pub fn get_status(&self, account_id: AccountId) -> Option<String> {
         self.status_updates.get(&account_id)
     }
+
+    // Retrives the vector with the given account ID
     pub fn get_notes(&self, account_id: AccountId) -> Vec<std::string::String> {
         match self.notes.get(&account_id) {
             Some(x) => x,
@@ -159,16 +78,19 @@ impl Produce {
         }
         // self.notes.get(&account_id).unwrap() # Converts it from optional to vector
     }
+
+    // Deletes notes associated to the account id through which the function is called
     pub fn delete_note(&mut self) {
         self.notes.remove(&env::predecessor_account_id());
     }
-    // pub fn get_updates(&self) -> Vec<(AccountId, std::string::String)> {
+    
+    // Retreives all the notes from the map
     pub fn get_updates(&self)-> Vec<Vec<std::string::String>> {
-      
+        
         let _keys = self.notes.keys_as_vector();
         let _values = self.notes.values_as_vector();
         let v1_iter = _values.iter();
-        println!("{_values:?}");
+        // println!("{_values:?}");
         let mut ans = Vec:: new();
         for i in v1_iter {
             ans.push(i);
